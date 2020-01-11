@@ -34,7 +34,7 @@ object HttpRequester {
                 .mapIf(detachedShortcut.usesCustomBody()) {
                     it.body(body)
                 }
-                .mapIf(detachedShortcut.allowsBody()) {
+                .mapIf(detachedShortcut.allowsBody() && detachedShortcut.requestBodyType != Shortcut.REQUEST_BODY_TYPE_NONE) {
                     it.contentType(determineContentType(detachedShortcut))
                 }
                 .timeout(detachedShortcut.timeout)

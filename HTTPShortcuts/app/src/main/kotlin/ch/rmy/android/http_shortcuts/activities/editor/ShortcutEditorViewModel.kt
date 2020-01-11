@@ -158,6 +158,7 @@ class ShortcutEditorViewModel(application: Application) : BasicShortcutEditorVie
                     R.string.subtitle_request_body_params_none,
                     R.plurals.subtitle_request_body_params_pattern
                 )
+                Shortcut.REQUEST_BODY_TYPE_NONE -> getString(R.string.subtitle_request_body_none)
                 else -> if (shortcut.bodyContent.isBlank()) {
                     getString(R.string.subtitle_request_body_none)
                 } else {

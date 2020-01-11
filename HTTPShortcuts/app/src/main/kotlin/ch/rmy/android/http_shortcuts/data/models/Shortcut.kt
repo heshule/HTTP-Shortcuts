@@ -53,11 +53,7 @@ open class Shortcut : RealmObject(), HasId {
     var codeOnFailure: String = ""
 
     fun allowsBody(): Boolean =
-        METHOD_POST == method
-            || METHOD_PUT == method
-            || METHOD_DELETE == method
-            || METHOD_PATCH == method
-            || METHOD_OPTIONS == method
+        setOf(METHOD_GET, METHOD_POST, METHOD_PUT, METHOD_DELETE, METHOD_PATCH, METHOD_OPTIONS).contains(method)
 
     fun isFeedbackErrorsOnly() =
         feedback == FEEDBACK_TOAST_ERRORS || feedback == FEEDBACK_TOAST_SIMPLE_ERRORS
@@ -152,6 +148,7 @@ open class Shortcut : RealmObject(), HasId {
         private const val RETRY_POLICY_NONE = "none"
         private const val RETRY_POLICY_WAIT_FOR_INTERNET = "wait_for_internet"
 
+        const val REQUEST_BODY_TYPE_NONE = "none"
         const val REQUEST_BODY_TYPE_FORM_DATA = "form_data"
         const val REQUEST_BODY_TYPE_X_WWW_FORM_URLENCODE = "x_www_form_urlencode"
         const val REQUEST_BODY_TYPE_CUSTOM_TEXT = "custom_text"
@@ -182,7 +179,7 @@ open class Shortcut : RealmObject(), HasId {
             delay = 0
             parameters = RealmList()
             headers = RealmList()
-            requestBodyType = REQUEST_BODY_TYPE_X_WWW_FORM_URLENCODE
+            requestBodyType = REQUEST_BODY_TYPE_NONE
             contentType = DEFAULT_CONTENT_TYPE
             codeOnPrepare = ""
             codeOnSuccess = ""

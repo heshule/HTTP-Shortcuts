@@ -524,6 +524,8 @@
     <string name="label_request_body_type">Request Body Type</string>
     <!-- Dropdown option for request body: form-data (i.e. list of parameters) -->
     <string name="request_body_option_form_data">Parameters (form-data)</string>
+    <!-- Dropdown option for request body: no request body -->
+    <string name="request_body_option_none">No request body</string>
     <!-- Dropdown option for request body: x-www-form-urlencoded (i.e. list of parameters) -->
     <string name="request_body_option_x_www_form_urlencoded">Parameters (x-www-form-urlencoded)</string>
     <!-- Dropdown option for request body: custom text (i.e. enter a custom Content-Type and a request body as text) -->

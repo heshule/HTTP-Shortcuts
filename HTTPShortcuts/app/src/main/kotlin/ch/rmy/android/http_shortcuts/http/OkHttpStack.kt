@@ -55,27 +55,32 @@ class OkHttpStack(private val client: OkHttpClient) : HttpStack {
         setHeaders(requestBuilder, request, additionalHeaders)
         setConnectionParameters(requestBuilder, request)
 
-        val okHttpRequest = requestBuilder.build()
-        val okHttpCall = client.newCall(okHttpRequest)
-        val okHttpResponse = okHttpCall.execute()
+        try {
+            val okHttpRequest = requestBuilder.build()
+            val okHttpCall = client.newCall(okHttpRequest)
+            val okHttpResponse = okHttpCall.execute()
 
-        val responseStatus = BasicStatusLine(
-            parseProtocol(okHttpResponse.protocol()),
-            okHttpResponse.code(),
-            okHttpResponse.message()
-        )
-        val response = BasicHttpResponse(responseStatus)
-        response.entity = getEntity(okHttpResponse)
+            val responseStatus = BasicStatusLine(
+                parseProtocol(okHttpResponse.protocol()),
+                okHttpResponse.code(),
+                okHttpResponse.message()
+            )
+            val response = BasicHttpResponse(responseStatus)
+            response.entity = getEntity(okHttpResponse)
 
-        val responseHeaders = okHttpResponse.headers()
-        var i = 0
-        val len = responseHeaders.size()
-        while (i < len) {
-            response.addHeader(BasicHeader(responseHeaders.name(i), responseHeaders.value(i)))
-            i++
+            val responseHeaders = okHttpResponse.headers()
+            var i = 0
+            val len = responseHeaders.size()
+            while (i < len) {
+                response.addHeader(BasicHeader(responseHeaders.name(i), responseHeaders.value(i)))
+                i++
+            }
+
+            return response
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
         }
-
-        return response
     }
 
     private fun parseProtocol(p: Protocol) = when (p) {
@@ -113,7 +118,16 @@ class OkHttpStack(private val client: OkHttpClient) : HttpStack {
     @Throws(AuthFailureError::class)
     private fun setConnectionParameters(builder: okhttp3.Request.Builder, request: Request<*>) {
         when (request.method) {
-            Request.Method.GET -> builder.get()
+            Request.Method.GET -> {
+                try {
+                    builder.post(createRequestBody(request))
+                    val field = okhttp3.Request.Builder::class.java.getDeclaredField("method")
+                    field.isAccessible = true
+                    field.set(builder, "GET")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
             Request.Method.DELETE -> builder.delete(createRequestBody(request))
             Request.Method.POST -> builder.post(createRequestBody(request))
             Request.Method.PUT -> builder.put(createRequestBody(request))
